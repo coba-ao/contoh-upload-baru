@@ -14,80 +14,67 @@
             width: 100%;
             height: 100%;
             font-family: 'Arial', sans-serif;
-            background: white; /* Latar belakang putih */
-            color: #851313; /* Warna teks merah */
+            background: white;
+            color: #851313;
             text-align: center;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            overflow: hidden;
         }
         .brand {
-            position: absolute;
-            top: 10px;
             font-size: 3rem;
             font-weight: bold;
-            color: #851313; /* Warna teks merah */
+            color: #851313;
+            margin-bottom: 20px;
         }
         .container {
-            background: rgba(255, 255, 255, 0.9); /* Latar belakang putih dengan transparansi */
+            background: rgba(255, 255, 255, 0.9);
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(133, 19, 19, 0.2); /* Border merah muda */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             max-width: 500px;
             width: 100%;
             display: none;
         }
         h1 {
             font-size: 2rem;
-            margin-bottom: 20px;
-            color: #851313; /* Warna teks merah */
+            margin-bottom: 15px;
         }
         #timer {
             font-size: 1.5rem;
-            margin-bottom: 20px;
             font-weight: bold;
-            color: #851313; /* Warna teks merah */
+            margin-bottom: 20px;
         }
         #question {
             font-size: 2rem;
             margin-bottom: 10px;
-            color: #851313; /* Warna teks merah */
         }
         .button-container {
             display: flex;
             flex-direction: column;
-            gap: 15px; /* Jarak antar tombol */
+            gap: 10px;
             margin-top: 20px;
         }
         button {
-            background: #851313; /* Warna latar merah */
-            color: white; /* Warna teks putih */
+            background: #851313;
+            color: white;
             border: none;
-            padding: 15px;
-            font-size: 1.5rem;
-            border-radius: 12px;
+            padding: 12px;
+            font-size: 1.3rem;
+            border-radius: 10px;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.2s ease;
+            transition: background 0.3s, transform 0.2s;
             width: 100%;
         }
         button:hover {
-            background: #6a0f0f; /* Warna merah lebih gelap saat hover */
+            background: #6a0f0f;
             transform: scale(1.05);
-        }
-        .hidden {
-            display: none !important;
         }
     </style>
 </head>
 <body>
-
     <div class="brand">BrainUp</div>
-
-    <!-- Menu Awal: Pilih Waktu -->
     <div id="startScreen" class="container" style="display: block;">
         <h1>Latihan Penjumlahan</h1>
         <p>Pilih waktu pengerjaan:</p>
@@ -97,97 +84,67 @@
             <button onclick="startGame(300)">5 Menit</button>
         </div>
     </div>
-
-    <!-- Halaman Game -->
     <div id="gameScreen" class="container">
         <h1>Latihan Penjumlahan</h1>
         <div id="timer">⏳ Waktu tersisa: </div>
         <div id="question">5 + 3 = ?</div>
-        <div class="button-container">
-            <button id="option1" onclick="submitAnswer(0)"></button>
-            <button id="option2" onclick="submitAnswer(1)"></button>
-            <button id="option3" onclick="submitAnswer(2)"></button>
-            <button id="option4" onclick="submitAnswer(3)"></button>
-            <button id="option5" onclick="submitAnswer(4)"></button>
-        </div>
+        <div class="button-container" id="options"></div>
         <div id="result"></div>
     </div>
-
-    <!-- Halaman Hasil Akhir -->
     <div id="finalResult" class="container">
         <h2>Hasil Akhir</h2>
         <p>✅ Jawaban Benar: <span id="correctCount">0</span></p>
         <p>❌ Jawaban Salah: <span id="wrongCount">0</span></p>
         <p>📋 Total Soal Dijawab: <span id="totalAnswered">0</span></p>
-
         <div class="button-container">
             <button onclick="restartGame()">🔄 Main Lagi</button>
             <button onclick="goToMainMenu()">🏠 Kembali ke Menu Utama</button>
         </div>
     </div>
-
     <script>
-        let timeLeft;
-        let timerInterval;
-        let correctAnswer;
-        let correctCount = 0;
-        let wrongCount = 0;
-        let totalAnswered = 0;
-
+        let timeLeft, timerInterval, correctAnswer, correctCount, wrongCount, totalAnswered;
         function startGame(duration) {
             timeLeft = duration;
             correctCount = 0;
             wrongCount = 0;
             totalAnswered = 0;
-
             document.getElementById('startScreen').style.display = "none";
             document.getElementById('finalResult').style.display = "none";
             document.getElementById('gameScreen').style.display = "block";
-
             startTimer();
             generateQuestion();
         }
-
         function startTimer() {
+            document.getElementById('timer').textContent = `⏳ Waktu tersisa: ${timeLeft}s`;
             timerInterval = setInterval(() => {
                 timeLeft--;
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft % 60;
-                document.getElementById('timer').textContent = `⏳ Waktu tersisa: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
+                document.getElementById('timer').textContent = `⏳ Waktu tersisa: ${timeLeft}s`;
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
                     endGame();
                 }
             }, 1000);
         }
-
         function generateQuestion() {
             let num1 = Math.floor(Math.random() * 10);
             let num2 = Math.floor(Math.random() * 10);
-            let sum = num1 + num2;
-            correctAnswer = sum % 10; // Ambil angka belakang saja
-
+            correctAnswer = num1 + num2;
             document.getElementById('question').textContent = `${num1} + ${num2} = ?`;
-
-            let options = new Set();
-            options.add(correctAnswer);
-            while (options.size < 5) {
-                options.add(Math.floor(Math.random() * 10)); // Jawaban hanya angka 0-9
+            let optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = "";
+            let options = new Set([correctAnswer]);
+            while (options.size < 4) {
+                options.add(Math.floor(Math.random() * 20));
             }
-
-            let optionsArray = [...options];
-            optionsArray = optionsArray.sort(() => Math.random() - 0.5);
-
-            for (let i = 0; i < 5; i++) {
-                document.getElementById(`option${i+1}`).textContent = optionsArray[i];
-            }
+            [...options].sort(() => Math.random() - 0.5).forEach((num, i) => {
+                let button = document.createElement("button");
+                button.textContent = num;
+                button.onclick = () => submitAnswer(num);
+                optionsContainer.appendChild(button);
+            });
         }
-
-        function submitAnswer(optionIndex) {
-            let selectedAnswer = parseInt(document.getElementById(`option${optionIndex+1}`).textContent);
+        function submitAnswer(selectedAnswer) {
             totalAnswered++;
-
             if (selectedAnswer === correctAnswer) {
                 correctCount++;
                 document.getElementById('result').textContent = "✅ Benar! 🎉";
@@ -197,7 +154,6 @@
             }
             generateQuestion();
         }
-
         function endGame() {
             clearInterval(timerInterval);
             document.getElementById('gameScreen').style.display = "none";
@@ -206,16 +162,11 @@
             document.getElementById('wrongCount').textContent = wrongCount;
             document.getElementById('totalAnswered').textContent = totalAnswered;
         }
-
-        function restartGame() {
-            startGame(60);
-        }
-
+        function restartGame() { startGame(60); }
         function goToMainMenu() {
             document.getElementById('finalResult').style.display = "none";
             document.getElementById('startScreen').style.display = "block";
         }
     </script>
-
 </body>
 </html>
