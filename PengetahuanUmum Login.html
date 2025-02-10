@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Pengetahuan Umum</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        header {
+            background-color: #851313;
+            color: white;
+            font-size: 2rem;
+            font-weight: bold;
+            padding: 15px 20px;
+            width: 100%;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            margin: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+        }
+        .option-btn {
+            background-color: #851313;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 45%;
+        }
+        .option-btn:hover {
+            background-color: #6a0f0f;
+        }
+        .option-btn.full-width {
+            width: 90%;
+        }
+        .time-select-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .time-select-btn {
+            background-color: #851313;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .time-select-btn:hover {
+            background-color: #6a0f0f;
+        }
+        .result-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+        .result-container button {
+            margin: 10px;
+        }
+        .quiz-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #851313;
+        }
+        .user-answers {
+            margin-top: 20px;
+            text-align: left;
+            width: 100%;
+        }
+        .user-answers p {
+            margin: 5px 0;
+        }
+        .end-quiz-btn {
+            background-color: #851313;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .end-quiz-btn:hover {
+            background-color: #6a0f0f;
+        }
+        .login-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .login-container input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 200px;
+        }
+        .login-container button {
+            background-color: #851313;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .login-container button:hover {
+            background-color: #6a0f0f;
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>BrainUP</header>
+    <div class="quiz-title">Soal Pengetahuan Umum</div>
+    <div class="container" id="login">
+        <h3>Login</h3>
+        <div class="login-container">
+            <input type="email" id="email" placeholder="Masukkan email">
+            <input type="password" id="password" placeholder="Masukkan password">
+            <button onclick="checkLogin()">Login</button>
+            <p id="error-message" class="error-message"></p>
+        </div>
+    </div>
+    <div class="container" id="time-select" style="display: none;">
+        <h3>Pilih Waktu Bermain</h3>
+        <div class="time-select-container">
+            <button class="time-select-btn" onclick="startGame(60)">1 Menit</button>
+            <button class="time-select-btn" onclick="startGame(120)">2 Menit</button>
+            <button class="time-select-btn" onclick="startGame(300)">5 Menit</button>
+        </div>
+    </div>
+    <div class="container" id="quiz" style="display: none;">
+        <h3>Jawablah soal berikut</h3>
+        <p class="question-text" id="question"></p>
+        <div class="options-container" id="options"></div>
+        <p id="feedback"></p>
+        <p id="timer"></p>
+        <button class="end-quiz-btn" onclick="endQuiz()">Akhiri Soal</button>
+    </div>
+    <div class="container result-container" id="result" style="display: none;">
+        <h3>Waktu Habis!</h3>
+        <p id="total-correct">Total Benar: 0</p>
+        <p id="total-wrong">Total Salah: 0</p>
+        <p id="total-answered">Total Soal yang Dijawab: 0</p>
+        <div class="user-answers" id="user-answers"></div>
+        <button class="time-select-btn" onclick="restartGame()">Main Lagi</button>
+        <button class="time-select-btn" onclick="goToMainMenu()">Menu Utama</button>
+    </div>
+    
+    <script>
+        const questions = [
+            { "question": "Siapa ilmuwan yang menemukan teori relativitas?", "options": ["Galileo Galilei", "Isaac Newton", "Albert Einstein", "Nikola Tesla", "Stephen Hawking"], "answer": "Albert Einstein" },
+            { "question": "Negara mana yang memiliki luas wilayah terbesar di dunia?", "options": ["Amerika Serikat", "Tiongkok", "Rusia", "Kanada", "Brasil"], "answer": "Rusia" },
+            { "question": "Apa ibukota Prancis?", "options": ["Berlin", "Madrid", "Paris", "Roma", "London"], "answer": "Paris" },
+            { "question": "Planet apa yang dikenal sebagai planet merah?", "options": ["Venus", "Mars", "Jupiter", "Saturnus", "Neptunus"], "answer": "Mars" },
+            { "question": "Siapa penulis drama 'Romeo dan Juliet'?", "options": ["Charles Dickens", "William Shakespeare", "Mark Twain", "Jane Austen", "Leo Tolstoy"], "answer": "William Shakespeare" },
+        ];
+        let questionIndex = 0;
+        let correctAnswers = 0;
+        let wrongAnswers = 0; // Menyimpan jumlah jawaban salah
+        let totalAnswered = 0;
+        let timeLeft = 0;
+        let initialTime = 0; // Menyimpan waktu awal yang dipilih
+        let timerInterval;
+        let shuffledQuestions = []; // Menyimpan soal yang sudah diacak
+        let userAnswers = []; // Menyimpan jawaban pengguna
+
+        // Data login yang sudah ditentukan
+        const validEmail = "user@example.com"; // Ganti dengan email yang valid
+        const validPassword = "password123"; // Ganti dengan password yang valid
+
+        function checkLogin() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('error-message');
+
+            if (email === validEmail && password === validPassword) {
+                // Jika email dan password benar, tampilkan menu utama
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('time-select').style.display = 'block';
+                errorMessage.innerText = '';
+            } else {
+                // Jika email atau password salah, tampilkan pesan error
+                errorMessage.innerText = 'Email atau password salah!';
+            }
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function startGame(seconds) {
+            initialTime = seconds; // Simpan waktu awal
+            timeLeft = seconds; // Set waktu bermain
+            document.getElementById('time-select').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            correctAnswers = 0;
+            wrongAnswers = 0; // Reset jumlah jawaban salah
+            totalAnswered = 0;
+            questionIndex = 0; // Reset indeks soal
+            userAnswers = []; // Reset jawaban pengguna
+
+            // Acak urutan soal setiap kali kuis dimulai
+            shuffledQuestions = [...questions];
+            shuffleArray(shuffledQuestions);
+
+            loadQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval); // Hentikan timer sebelumnya (jika ada)
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = `Waktu tersisa: ${timeLeft} detik`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    showResult();
+                }
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            let currentQuestion = shuffledQuestions[questionIndex % shuffledQuestions.length];
+            document.getElementById('question').innerText = currentQuestion.question;
+            document.getElementById('options').innerHTML = '';
+            document.getElementById('feedback').innerText = '';
+            
+            // Acak urutan pilihan jawaban
+            shuffleArray(currentQuestion.options);
+            
+            let optionsContainer = document.getElementById('options');
+            currentQuestion.options.forEach((option, index) => {
+                let button = document.createElement('button');
+                button.innerText = option;
+                button.classList.add('option-btn');
+                
+                if (currentQuestion.options.length % 2 !== 0 && index === currentQuestion.options.length - 1) {
+                    button.classList.add('full-width');
+                }
+                
+                button.onclick = () => {
+                    // Simpan jawaban pengguna
+                    userAnswers.push({
+                        question: currentQuestion.question,
+                        userAnswer: option,
+                        correctAnswer: currentQuestion.answer,
+                        isCorrect: option === currentQuestion.answer
+                    });
+
+                    if (option === currentQuestion.answer) {
+                        document.getElementById('feedback').innerText = "✔️ Jawaban Benar!";
+                        document.getElementById('feedback').style.color = "green";
+                        correctAnswers++;
+                    } else {
+                        document.getElementById('feedback').innerText = "❌ Jawaban Salah, coba lagi!";
+                        document.getElementById('feedback').style.color = "red";
+                        wrongAnswers++; // Tambah jumlah jawaban salah
+                    }
+                    totalAnswered++;
+                    questionIndex++;
+                    setTimeout(loadQuestion, 1000);
+                };
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function showResult() {
+            clearInterval(timerInterval); // Hentikan timer
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('result').style.display = 'flex';
+            document.getElementById('total-correct').innerText = `Total Benar: ${correctAnswers}`;
+            document.getElementById('total-wrong').innerText = `Total Salah: ${wrongAnswers}`;
+            document.getElementById('total-answered').innerText = `Total Soal yang Dijawab: ${totalAnswered}`;
+
+            // Tampilkan jawaban pengguna
+            let userAnswersContainer = document.getElementById('user-answers');
+            userAnswersContainer.innerHTML = '<h4>Jawaban Anda:</h4>';
+            userAnswers.forEach((answer, index) => {
+                userAnswersContainer.innerHTML += `
+                    <p><strong>Soal ${index + 1}:</strong> ${answer.question}</p>
+                    <p><strong>Jawaban Anda:</strong> ${answer.userAnswer} (${answer.isCorrect ? 'Benar' : 'Salah'})</p>
+                    <p><strong>Jawaban Benar:</strong> ${answer.correctAnswer}</p>
+                    <hr>
+                `;
+            });
+        }
+
+        function endQuiz() {
+            showResult(); // Tampilkan hasil langsung
+        }
+
+        function restartGame() {
+            // Reset waktu ke nilai awal yang dipilih dan acak soal lagi
+            startGame(initialTime);
+        }
+
+        function goToMainMenu() {
+            clearInterval(timerInterval); // Hentikan timer
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('time-select').style.display = 'block';
+            document.getElementById('quiz').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
