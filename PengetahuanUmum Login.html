@@ -3,347 +3,2103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kuis Pengetahuan Umum</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Ujian SKD IPDN</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
+        /* CSS DARI style.css DIGABUNGKAN DI SINI */
+        :root {
+            --primary-color: #5d0000; /* Dark Red */
+            --secondary-color: #f0f0f0; /* Light Gray */
+            --text-color: #333;
+            --white-color: #fff;
+            --success-color: #28a745; /* Green for correct */
+            --danger-color: #dc3545; /* Red for wrong */
+            --warning-color: #ffc107; /* Yellow/Orange for skipped/marked */
+            --info-color: #17a2b8; /* Cyan for info */
+            --border-color: #ddd;
+            --card-bg: #fff;
+            --header-bg: #5d0000;
+            --button-warning-bg: #ffc107; /* Yellow for Simpan & Tandai */
+            --button-info-bg: #17a2b8; /* Cyan for Lanjut Soal Kosong */
+            --button-danger-bg: #dc3545; /* Red for Selesai Ujian */
+
+            /* New colors for question numbers status */
+            --unseen-unanswered-color: #f8f9fa; /* White-gray, default unseen/unanswered */
+            --seen-unanswered-color: #dc3545; /* Red for seen but unanswered */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: #f0f2f5;
-            text-align: center;
-            padding: 20px;
-            margin: 0;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            line-height: 1.6;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
             min-height: 100vh;
         }
-        header {
-            background-color: #851313;
-            color: white;
-            font-size: 2rem;
-            font-weight: bold;
-            padding: 15px 20px;
-            width: 100%;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
+
         .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 100%;
-            margin: 10px;
+            width: 90%;
+            max-width: 1200px; /* Max width for desktop */
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .section {
+            display: none; /* Hide all sections by default */
+        }
+
+        .section.active {
+            display: block; /* Show active section */
+        }
+
+        /* Header */
+        .header {
+            background-color: var(--header-bg);
+            color: var(--white-color);
+            padding: 15px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            background-color: var(--white-color);
+            color: var(--primary-color);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .user-details {
             display: flex;
             flex-direction: column;
-            align-items: center;
         }
-        .options-container {
+
+        .username {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .ipdn-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .timer {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-top: 10px; /* For mobile spacing */
+        }
+
+        /* Card Styles */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        /* Biodata Section */
+        #biodata-section .card {
+            max-width: 500px;
+            margin: 40px auto;
+            text-align: center;
+        }
+        #biodata-section .card h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        #biodata-section .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        #biodata-section .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        #biodata-section .form-group input[type="text"],
+        #biodata-section .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        #biodata-section .history-list {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 10px;
+            background-color: var(--secondary-color);
+            text-align: left;
+        }
+        #biodata-section .history-item {
+            padding: 8px 0;
+            border-bottom: 1px dotted var(--border-color);
+        }
+        #biodata-section .history-item:last-child {
+            border-bottom: none;
+        }
+        #biodata-section .history-item span {
+            display: block;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+
+        /* Question Section */
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+        }
+
+        .question-card .question-text {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Styles for table within question text */
+        .question-text table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .question-text table th,
+        .question-text table td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .question-text table th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+
+        /* Styles for images within question text */
+        .question-text img {
+            max-width: 100%; /* Ensure images don't overflow */
+            height: auto;
+            display: block; /* Center images */
+            margin: 15px auto;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .option:hover {
+            background-color: #f9f9f9;
+        }
+
+        /* Styles for images within options */
+        .option img {
+            max-width: 100px; /* Adjust as needed */
+            max-height: 100px; /* Adjust as needed */
+            margin-right: 15px; /* Space between radio and image */
+            vertical-align: middle;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 15px;
+            accent-color: var(--primary-color); /* Changes radio button color */
+            width: 18px;
+            height: 18px;
+            /* Penting: pointer-events: none; membuat radio button tidak bisa diklik langsung,
+               hanya labelnya yang merespon. Ini untuk memastikan area klik luas. */
+            pointer-events: none;
+            flex-shrink: 0; /* Prevent radio button from shrinking */
+        }
+
+        .option span { /* Styles for the text/image container within option */
+            display: flex; /* Use flex to align image/text within span */
+            align-items: center;
+            gap: 10px; /* Gap between option letter and content */
+            flex-grow: 1; /* Allow content to take available space */
+        }
+        .option span img {
+            margin-right: 0; /* Reset margin from general img rule */
+            display: inline-block; /* Keep images inline with text/radio */
+        }
+
+
+        .option.selected-answer {
+            background-color: #e6ffe6; /* Light green for selected */
+            border-color: var(--success-color);
+        }
+
+        .answer-status {
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: none; /* Hidden by default, shown for discussion */
+        }
+
+        .answer-status.correct {
+            background-color: #d4edda;
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+
+        .answer-status.wrong {
+            background-color: #f8d7da;
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px; /* Space for the new button row */
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            flex: 1; /* Make buttons take equal width */
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .btn-primary:hover {
+            background-color: #4a0000; /* Darker red on hover */
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: var(--white-color);
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        /* New Buttons for Quiz Control */
+        .quiz-control-buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-warning {
+            background-color: var(--button-warning-bg);
+            color: var(--text-color);
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-info {
+            background-color: var(--button-info-bg);
+            color: var(--white-color);
+        }
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+        .btn-danger {
+            background-color: var(--button-danger-bg);
+            color: var(--white-color);
+        }
+        .btn-danger:hover {
+            background-color: #bd2130;
+        }
+
+
+        .question-progress {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 10px;
+        }
+
+        .progress-item {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .progress-item span {
+            font-weight: 700;
+        }
+
+        .q-num-answered { /* Changed from .answered to avoid conflict with progress-item */
+            color: var(--success-color);
+        }
+
+        .q-num-not-answered { /* Changed from .not-answered */
+            color: var(--danger-color);
+        }
+
+        .question-numbers {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            width: 100%;
+            gap: 8px;
+            margin-top: 20px;
+            justify-content: center; /* Center align numbers */
         }
-        .option-btn {
-            background-color: #851313;
-            color: white;
-            border: none;
-            padding: 10px;
+
+        .q-num {
+            width: 40px;
+            height: 40px;
             border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            width: 45%;
-        }
-        .option-btn:hover {
-            background-color: #6a0f0f;
-        }
-        .option-btn.full-width {
-            width: 90%;
-        }
-        .time-select-container {
+            border: 1px solid var(--border-color);
+            background-color: var(--white-color); /* Default for unseen/unanswered */
+            color: var(--text-color);
+            font-weight: 600;
             display: flex;
-            gap: 10px;
             justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .q-num:hover {
+            background-color: #f0f0f0;
+        }
+
+        .q-num.answered-q { /* Added -q to avoid conflict */
+            background-color: var(--success-color);
+            color: var(--white-color);
+            border-color: var(--success-color);
+        }
+
+        .q-num.seen-unanswered-q { /* New class for seen but not answered */
+            background-color: var(--seen-unanswered-color); /* Red */
+            color: var(--white-color);
+            border-color: var(--seen-unanswered-color);
+        }
+
+        .q-num.marked-q { /* New class for marked questions */
+            background-color: var(--warning-color);
+            color: var(--text-color);
+            border-color: var(--warning-color);
+        }
+
+        .q-num.current {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+        /* Styles for discussion question numbers */
+        .q-num.selected { /* Mark current discussion question */
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            border-color: var(--primary-color);
+            transform: scale(1.1);
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        /* Result Section */
+        .result-card {
+            text-align: center;
+        }
+
+        .result-title {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+
+        .greeting {
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .school-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+        }
+
+        .total-score {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        .total-score .score-value {
+            display: block; /* Ensures score is on its own line */
+            margin-top: 5px;
+        }
+
+        .score-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .score-category {
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .score-category.total-summary {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            font-weight: 600;
+        }
+
+        .score-category .category-name {
+            font-size: 1.1em;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .score-category .category-score {
+            font-size: 1.5em;
+            font-weight: 700;
+            display: block;
+        }
+
+        .score-category .question-info {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        /* Rincian Tengah Horizontal */
+        .details-summary {
+            margin-bottom: 30px;
+            text-align: center; /* Center the h3 */
+        }
+
+        .details-summary h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: center; /* Center items horizontally */
+            flex-wrap: wrap; /* Allow wrapping */
+            gap: 25px; /* Spacing between items */
+        }
+
+        .detail-item {
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-item .icon {
+            font-size: 1.2em;
+        }
+
+        .correct-detail {
+            color: var(--success-color);
+        }
+
+        .wrong-detail {
+            color: var(--danger-color);
+        }
+
+        .skipped-detail {
+            color: var(--warning-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap; /* Allow wrapping for mobile */
+        }
+
+        .action-buttons .btn {
+            flex: unset; /* Remove flex 1 for more controlled sizing */
+            min-width: 180px; /* Ensure buttons have a decent minimum width */
+        }
+
+        /* Discussion Section */
+        .discussion-card {
+            text-align: center;
+        }
+
+        .discussion-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .discussion-content-area {
+            text-align: left; /* Align text left within discussion card */
+            margin-bottom: 20px;
+            min-height: 200px; /* Give some height even if no content */
+        }
+
+        .discussion-question-numbers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+            justify-content: center;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
             margin-bottom: 20px;
         }
-        .time-select-btn {
-            background-color: #851313;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+        .discussion-question-numbers .q-num {
+             background-color: var(--white-color);
+             color: var(--text-color);
+             border: 1px solid var(--border-color);
         }
-        .time-select-btn:hover {
-            background-color: #6a0f0f;
+        .discussion-question-numbers .q-num.answered-q {
+            background-color: var(--success-color); /* Correct answer in quiz */
+            color: var(--white-color);
         }
-        .result-container {
-            display: none;
-            flex-direction: column;
-            align-items: center;
+        .discussion-question-numbers .q-num.not-answered-q {
+            background-color: var(--danger-color); /* Incorrect answer in quiz */
+            color: var(--white-color);
         }
-        .result-container button {
-            margin: 10px;
+
+
+        .discussion-item .discussion-question {
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+            color: var(--primary-color);
         }
-        .quiz-title {
-            font-size: 1.5rem;
+
+        .discussion-item .discussion-answer {
+            margin-bottom: 5px;
             font-weight: bold;
-            margin-bottom: 20px;
-            color: #851313;
         }
-        .user-answers {
-            margin-top: 20px;
-            text-align: left;
-            width: 100%;
+        .discussion-item .discussion-explanation {
+            font-size: 0.95em;
+            line-height: 1.6;
+            white-space: pre-wrap; /* Preserve newlines from \n */
         }
-        .user-answers p {
-            margin: 5px 0;
+
+        .discussion-option-score {
+            font-size: 0.9em;
+            font-style: italic;
+            color: #777;
+            margin-left: 10px;
         }
-        .end-quiz-btn {
-            background-color: #851313;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-top: 20px;
-        }
-        .end-quiz-btn:hover {
-            background-color: #6a0f0f;
-        }
-        .login-container {
+
+        /* New styles for discussion section options */
+        .discussion-option {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 10px;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px; /* Space between options */
+            font-size: 1em;
+            position: relative; /* For checkmark/cross */
         }
-        .login-container input {
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: 100%;
-            max-width: 200px;
+
+        .discussion-option.correct-option {
+            background-color: #d4edda; /* Light green */
+            border-color: var(--success-color);
+            color: var(--success-color);
+            font-weight: 600;
         }
-        .login-container button {
-            background-color: #851313;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
+
+        .discussion-option.wrong-user-answer {
+            background-color: #f8d7da; /* Light red */
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+            font-weight: 600;
         }
-        .login-container button:hover {
-            background-color: #6a0f0f;
+        /* Images inside discussion options */
+        .discussion-option img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 10px; /* Space between option letter and image */
+            vertical-align: middle;
         }
-        .error-message {
-            color: red;
-            margin-top: 10px;
+
+
+        /* Icons for correct/wrong answers in discussion */
+        .discussion-option .icon-status {
+            position: absolute;
+            right: 15px;
+            font-size: 1.5em;
+            line-height: 1; /* Align vertically */
         }
+
+        .discussion-option .icon-status.correct {
+            color: var(--success-color);
+        }
+
+        .discussion-option .icon-status.wrong {
+            color: var(--danger-color);
+        }
+
+        /* --- Modal Styles --- */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--white-color);
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .modal-content p {
+            margin-bottom: 25px;
+            font-size: 1.1em;
+            color: #555;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-buttons .btn {
+            flex: 1;
+            max-width: 150px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px 0;
+            }
+
+            .header-content {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .timer {
+                align-self: flex-end;
+                margin-top: 10px;
+            }
+
+            .section-title {
+                font-size: 1.5em;
+            }
+
+            .question-card .question-text {
+                font-size: 1em;
+            }
+
+            .option {
+                padding: 10px 12px;
+                font-size: 0.95em;
+            }
+            .option img {
+                max-width: 80px; /* Smaller images on mobile */
+                max-height: 80px;
+            }
+
+
+            .btn {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+
+            .navigation-buttons,
+            .quiz-control-buttons {
+                flex-direction: column;
+                gap: 8px; /* Reduce gap on mobile */
+            }
+            .navigation-buttons .btn,
+            .quiz-control-buttons .btn {
+                 width: 100%; /* Full width for buttons */
+                 flex: none; /* Override flex: 1 */
+            }
+
+
+            .question-progress {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .q-num {
+                width: 35px;
+                height: 35px;
+                font-size: 0.9em;
+            }
+
+            .result-title {
+                font-size: 1.8em;
+            }
+
+            .total-score {
+                font-size: 2em;
+            }
+
+            .score-breakdown {
+                grid-template-columns: 1fr; /* Stack categories on mobile */
+            }
+
+            .details-summary h3 {
+                font-size: 1.3em;
+            }
+
+            .detail-row {
+                flex-direction: column; /* Stack details vertically */
+                gap: 10px;
+            }
+
+            .action-buttons {
+                flex-direction: column; /* Stack buttons vertically */
+            }
+            .action-buttons .btn {
+                width: 100%;
+                min-width: unset;
+            }
+            #biodata-section .card {
+                margin: 20px auto;
+                padding: 15px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+        }
+    
     </style>
 </head>
 <body>
-    <header>BrainUP</header>
-    <div class="quiz-title">Soal Pengetahuan Umum</div>
-    <div class="container" id="login">
-        <h3>Login</h3>
-        <div class="login-container">
-            <input type="email" id="email" placeholder="Masukkan email">
-            <input type="password" id="password" placeholder="Masukkan password">
-            <button onclick="checkLogin()">Login</button>
-            <p id="error-message" class="error-message"></p>
-        </div>
-    </div>
-    <div class="container" id="time-select" style="display: none;">
-        <h3>Pilih Waktu Bermain</h3>
-        <div class="time-select-container">
-            <button class="time-select-btn" onclick="startGame(60)">1 Menit</button>
-            <button class="time-select-btn" onclick="startGame(120)">2 Menit</button>
-            <button class="time-select-btn" onclick="startGame(300)">5 Menit</button>
-        </div>
-    </div>
-    <div class="container" id="quiz" style="display: none;">
-        <h3>Jawablah soal berikut</h3>
-        <p class="question-text" id="question"></p>
-        <div class="options-container" id="options"></div>
-        <p id="feedback"></p>
-        <p id="timer"></p>
-        <button class="end-quiz-btn" onclick="endQuiz()">Akhiri Soal</button>
-    </div>
-    <div class="container result-container" id="result" style="display: none;">
-        <h3>Waktu Habis!</h3>
-        <p id="total-correct">Total Benar: 0</p>
-        <p id="total-wrong">Total Salah: 0</p>
-        <p id="total-answered">Total Soal yang Dijawab: 0</p>
-        <div class="user-answers" id="user-answers"></div>
-        <button class="time-select-btn" onclick="restartGame()">Main Lagi</button>
-        <button class="time-select-btn" onclick="goToMainMenu()">Menu Utama</button>
-    </div>
     
+
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="user-info">
+                    <div class="avatar" id="user-avatar">?</div>
+                    <div class="user-details">
+                        <span class="username" id="display-username">Nama Anda</span>
+                        <span class="ipdn-label" id="display-school">Sekdin Impian</span>
+                    </div>
+                </div>
+                <div class="timer" id="timer-display">
+                    </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="biodata-section" class="section active">
+            <div class="card">
+                <h2>Selamat Datang di Ujian SKD</h2>
+                <p style="margin-bottom: 20px;">Silakan lengkapi data Anda sebelum memulai ujian.</p>
+                <div class="form-group">
+                    <label for="input-username">Nama Lengkap:</label>
+                    <input type="text" id="input-username" placeholder="Masukkan nama Anda">
+                </div>
+                <div class="form-group">
+                    <label for="input-school">Sekolah Kedinasan Impian:</label>
+                    <select id="input-school">
+                        <option value="IPDN">IPDN</option>
+                        <option value="STIN">STIN</option>
+                        <option value="STAN">STAN</option>
+                        <option value="Poltekip">Poltekip</option>
+                        <option value="Poltekim">Poltekim</option>
+                        <option value="STIS">STIS</option>
+                        <option value="STTD">STTD</option>
+                        <option value="Poltek SSN">Poltek SSN</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Riwayat Ujian Anda:</label>
+                    <div class="history-list" id="exam-history-list">
+                        <p style="text-align: center; color: #888;">Belum ada riwayat ujian.</p>
+                    </div>
+                </div>
+                <button class="btn btn-primary" id="start-exam-btn">Mulai Ujian</button>
+            </div>
+        </section>
+
+        <section id="question-section" class="section">
+            <h2 class="section-title" id="question-title">1. TES WAWASAN KEBANGSAAN</h2>
+            <div class="card question-card">
+                <p class="question-text" id="question-text">Berdasarkan Pancasila, sila ke berapakah yang melambangkan kemanusiaan yang adil dan beradab?</p>
+                <div class="options" id="options-container">
+                    </div>
+                <div class="answer-status" id="answer-status-display">
+                    </div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" id="prev-question-btn">Sebelumnya</button>
+                    <button class="btn btn-primary" id="next-question-btn">Selanjutnya</button>
+                </div>
+                <div class="quiz-control-buttons">
+                    <button class="btn btn-warning" id="save-mark-btn">Simpan & Tandai</button>
+                    <button class="btn btn-info" id="next-unanswered-btn">Belum Dijawab</button>
+                    <button class="btn btn-danger" id="finish-exam-btn">Selesai Ujian</button>
+                </div>
+            </div>
+            <div class="question-progress">
+                <div class="progress-item q-num-answered">Dijawab: <span id="answered-count">0</span></div>
+                <div class="progress-item q-num-not-answered">Belum Dijawab: <span id="not-answered-count">0</span></div>
+                <div class="progress-item">Sisa Waktu: <span id="remaining-time-progress"></span></div>
+            </div>
+            <div class="question-numbers" id="question-numbers-container">
+                </div>
+        </section>
+
+        <section id="result-section" class="section">
+            <div class="card result-card">
+                <h2 class="result-title">Hasil Ujian Anda</h2>
+                <p class="greeting">Selamat, <span id="result-username">Nama Anda</span>! Anda telah menyelesaikan ujian. Berikut adalah detail hasil Anda:</p>
+                <div class="school-name">Sekolah Kedinasan Impian: <span id="result-school-name">Sekdin Impian</span></div>
+                <div class="total-score">
+                    Skor Total: <span class="score-value" id="final-total-score">0/0</span>
+                </div>
+                <div class="score-breakdown">
+                    <div class="score-category">
+                        <span class="category-name">TWK</span>
+                        <span class="category-score" id="twk-score">0/0</span>
+                        <span class="question-info" id="twk-info">(0/0 soal)</span>
+                    </div>
+                    <div class="score-category">
+                        <span class="category-name">TIU</span>
+                        <span class="category-score" id="tiu-score">0/0</span>
+                        <span class="question-info" id="tiu-info">(0/0 soal)</span>
+                    </div>
+                    <div class="score-category">
+                        <span class="category-name">TKP</span>
+                        <span class="category-score" id="tkp-score">0/0</span>
+                        <span class="question-info" id="tkp-info">(0/0 soal)</span>
+                    </div>
+                    <div class="score-category total-summary">
+                        <span class="category-name">Total</span>
+                        <span class="category-score" id="summary-total-score">0/0</span>
+                        <span class="question-info" id="summary-total-info">(0 soal)</span>
+                    </div>
+                </div>
+                <div class="details-summary">
+                    <h3>Rincian:</h3>
+                    <div class="detail-row">
+                        <span class="detail-item correct-detail"><span class="icon">&#10003;</span> Benar: <span id="correct-count">0</span> soal</span>
+                        <span class="detail-item wrong-detail"><span class="icon">&#10007;</span> Salah: <span id="wrong-count">0</span> soal</span>
+                        <span class="detail-item skipped-detail"><span class="icon">?</span> Tidak dijawab: <span id="skipped-count">0</span> soal</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="view-discussion-btn">Lihat Pembahasan</button>
+                    <button class="btn btn-secondary" id="retake-exam-btn">Ulang Ujian</button>
+                    <button class="btn btn-info" id="back-to-biodata-btn">Kembali ke Biodata</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="discussion-section" class="section">
+            <div class="card discussion-card">
+                <h2 class="discussion-title" id="discussion-header-title">Pembahasan Soal</h2>
+                <div class="discussion-question-numbers" id="discussion-question-numbers-container">
+                    </div>
+                <div class="discussion-content-area" id="discussion-content-area">
+                    <p style="text-align: center; color: #666;">Pilih nomor soal di atas untuk melihat pembahasan.</p>
+                </div>
+                <div class="navigation-buttons">
+                    <button class="btn btn-secondary" id="prev-discussion-btn">Sebelumnya</button>
+                    <button class="btn btn-primary" id="next-discussion-btn">Selanjutnya</button>
+                </div>
+                <div class="action-buttons" style="margin-top: 20px;">
+                    <button class="btn btn-secondary" id="back-to-score-btn">Kembali ke Skor</button>
+                </div>
+            </div>
+        </section>
+
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <h3>Konfirmasi Ujian</h3>
+            <p id="modal-message">Anda yakin ingin menyelesaikan ujian? Waktu yang tersisa akan hangus dan hasil akan dihitung.</p>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="modal-cancel-btn">Batal</button>
+                <button class="btn btn-danger" id="modal-confirm-btn">Selesaikan</button>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-        const questions = [
-            { "question": "Siapa ilmuwan yang menemukan teori relativitas?", "options": ["Galileo Galilei", "Isaac Newton", "Albert Einstein", "Nikola Tesla", "Stephen Hawking"], "answer": "Albert Einstein" },
-            { "question": "Negara mana yang memiliki luas wilayah terbesar di dunia?", "options": ["Amerika Serikat", "Tiongkok", "Rusia", "Kanada", "Brasil"], "answer": "Rusia" },
-            { "question": "Apa ibukota Prancis?", "options": ["Berlin", "Madrid", "Paris", "Roma", "London"], "answer": "Paris" },
-            { "question": "Planet apa yang dikenal sebagai planet merah?", "options": ["Venus", "Mars", "Jupiter", "Saturnus", "Neptunus"], "answer": "Mars" },
-            { "question": "Siapa penulis drama 'Romeo dan Juliet'?", "options": ["Charles Dickens", "William Shakespeare", "Mark Twain", "Jane Austen", "Leo Tolstoy"], "answer": "William Shakespeare" },
-        ];
-        let questionIndex = 0;
-        let correctAnswers = 0;
-        let wrongAnswers = 0; // Menyimpan jumlah jawaban salah
-        let totalAnswered = 0;
-        let timeLeft = 0;
-        let initialTime = 0; // Menyimpan waktu awal yang dipilih
-        let timerInterval;
-        let shuffledQuestions = []; // Menyimpan soal yang sudah diacak
-        let userAnswers = []; // Menyimpan jawaban pengguna
+        // JAVASCRIPT DIGABUNGKAN DI SINI
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const biodataSection = document.getElementById('biodata-section');
+            const questionSection = document.getElementById('question-section');
+            const resultSection = document.getElementById('result-section');
+            const discussionSection = document.getElementById('discussion-section');
 
-        // Data login yang sudah ditentukan
-        const validEmail = "user@example.com"; // Ganti dengan email yang valid
-        const validPassword = "password123"; // Ganti dengan password yang valid
+            const inputUsername = document.getElementById('input-username');
+            const inputSchool = document.getElementById('input-school');
+            const examHistoryList = document.getElementById('exam-history-list');
+            const startExamBtn = document.getElementById('start-exam-btn');
 
-        function checkLogin() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('error-message');
+            const userAvatar = document.getElementById('user-avatar');
+            const displayUsername = document.getElementById('display-username');
+            const displaySchool = document.getElementById('display-school');
+            const resultUsername = document.getElementById('result-username');
+            const resultSchoolName = document.getElementById('result-school-name');
 
-            if (email === validEmail && password === validPassword) {
-                // Jika email dan password benar, tampilkan menu utama
-                document.getElementById('login').style.display = 'none';
-                document.getElementById('time-select').style.display = 'block';
-                errorMessage.innerText = '';
-            } else {
-                // Jika email atau password salah, tampilkan pesan error
-                errorMessage.innerText = 'Email atau password salah!';
-            }
-        }
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
+            const questionTitle = document.getElementById('question-title');
+            const questionText = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const answerStatusDisplay = document.getElementById('answer-status-display'); // This will be used in discussion view
 
-        function startGame(seconds) {
-            initialTime = seconds; // Simpan waktu awal
-            timeLeft = seconds; // Set waktu bermain
-            document.getElementById('time-select').style.display = 'none';
-            document.getElementById('quiz').style.display = 'block';
-            document.getElementById('result').style.display = 'none';
-            correctAnswers = 0;
-            wrongAnswers = 0; // Reset jumlah jawaban salah
-            totalAnswered = 0;
-            questionIndex = 0; // Reset indeks soal
-            userAnswers = []; // Reset jawaban pengguna
+            const prevQuestionBtn = document.getElementById('prev-question-btn');
+            const nextQuestionBtn = document.getElementById('next-question-btn');
+            const saveMarkBtn = document.getElementById('save-mark-btn');
+            const nextUnansweredBtn = document.getElementById('next-unanswered-btn');
+            const finishExamBtn = document.getElementById('finish-exam-btn');
 
-            // Acak urutan soal setiap kali kuis dimulai
-            shuffledQuestions = [...questions];
-            shuffleArray(shuffledQuestions);
+            const answeredCountSpan = document.getElementById('answered-count');
+            const notAnsweredCountSpan = document.getElementById('not-answered-count');
+            const remainingTimeProgressSpan = document.getElementById('remaining-time-progress');
+            const timerDisplay = document.getElementById('timer-display');
+            const questionNumbersContainer = document.getElementById('question-numbers-container');
 
-            loadQuestion();
-            startTimer();
-        }
+            const finalTotalScoreSpan = document.getElementById('final-total-score');
+            const twkScoreSpan = document.getElementById('twk-score');
+            const tiuScoreSpan = document.getElementById('tiu-score');
+            const tkpScoreSpan = document.getElementById('tkp-score');
+            const twkInfoSpan = document.getElementById('twk-info');
+            const tiuInfoSpan = document.getElementById('tiu-info');
+            const tkpInfoSpan = document.getElementById('tkp-info');
+            const summaryTotalScoreSpan = document.getElementById('summary-total-score');
+            const summaryTotalInfoSpan = document.getElementById('summary-total-info'); // FIX: typo in ID
+            const correctCountSpan = document.getElementById('correct-count');
+            const wrongCountSpan = document.getElementById('wrong-count');
+            const skippedCountSpan = document.getElementById('skipped-count');
 
-        function startTimer() {
-            clearInterval(timerInterval); // Hentikan timer sebelumnya (jika ada)
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timer').innerText = `Waktu tersisa: ${timeLeft} detik`;
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    showResult();
-                }
-            }, 1000);
-        }
+            const viewDiscussionBtn = document.getElementById('view-discussion-btn');
+            const backToScoreBtn = document.getElementById('back-to-score-btn');
+            const retakeExamBtn = document.getElementById('retake-exam-btn');
+            const backToBiodataBtn = document.getElementById('back-to-biodata-btn');
 
-        function loadQuestion() {
-            let currentQuestion = shuffledQuestions[questionIndex % shuffledQuestions.length];
-            document.getElementById('question').innerText = currentQuestion.question;
-            document.getElementById('options').innerHTML = '';
-            document.getElementById('feedback').innerText = '';
+            const discussionHeaderTitle = document.getElementById('discussion-header-title'); // New
+            const discussionContentArea = document.getElementById('discussion-content-area');
+            const discussionQuestionNumbersContainer = document.getElementById('discussion-question-numbers-container');
+            const prevDiscussionBtn = document.getElementById('prev-discussion-btn'); // New
+            const nextDiscussionBtn = document.getElementById('next-discussion-btn'); // New
+
+            // Modal Elements
+            const confirmModal = document.getElementById('confirm-modal');
+            const modalMessage = document.getElementById('modal-message');
+            const modalCancelBtn = document.getElementById('modal-cancel-btn');
+            const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+
+
+            // --- Quiz Data & State ---
+            const questions = [
+                // TWK (1-30) - Sample 1
+                {
+                    id: 1,
+                    type: 'TWK',
+                    question: 'Berdasarkan Pancasila, sila ke berapakah yang melambangkan kemanusiaan yang adil dan beradab?',
+                    options: ['A. Sila pertama', 'B. Sila kedua', 'C. Sila ketiga', 'D. Sila keempat', 'E. Sila kelima'],
+                    correctAnswer: 'B',
+                    explanation: 'Sila kedua Pancasila, "Kemanusiaan yang Adil dan Beradab", melambangkan pengakuan dan penghormatan terhadap martabat setiap manusia, tanpa memandang suku, agama, ras, atau golongan. Sila ini menekankan pentingnya keadilan, kesamaan hak dan kewajiban, serta sikap beradab dalam interaksi sosial.'
+                },
+                // TWK (1-30) - Sample 2
+                {
+                    id: 2,
+                    type: 'TWK',
+                    question: 'Teks Proklamasi Kemerdekaan Indonesia diketik oleh siapa?',
+                    options: ['A. Soekarno', 'B. Moh. Hatta', 'C. Sayuti Melik', 'D. Fatmawati', 'E. Sukarni'],
+                    correctAnswer: 'C',
+                    explanation: 'Teks Proklamasi Kemerdekaan Indonesia diketik oleh Sayuti Melik setelah ditulis tangan oleh Soekarno.'
+                },
+                // TIU (31-65) - Sample 1
+                {
+                    id: 31,
+                    type: 'TIU',
+                    question: 'Jika 3x + 5 = 20, berapakah nilai x?',
+                    options: ['A. 3', 'B. 4', 'C. 5', 'D. 6', 'E. 7'],
+                    correctAnswer: 'C',
+                    explanation: '3x + 5 = 20 \n 3x = 20 - 5 \n 3x = 15 \n x = 15 / 3 \n x = 5'
+                },
+                // TIU (31-65) - Sample 2
+                {
+                    id: 32,
+                    type: 'TIU',
+                    question: 'Manakah dari kata berikut yang tidak termasuk dalam kelompoknya?',
+                    options: ['A. Apel', 'B. Jeruk', 'C. Nanas', 'D. Kentang', 'E. Mangga'],
+                    correctAnswer: 'D',
+                    explanation: 'Apel, jeruk, nanas, dan mangga adalah buah-buahan. Kentang adalah sayuran (umbi).'
+                },
+                {
+                    id: 33,
+                    type: 'TIU',
+                    question: `Perhatikan tabel nilai siswa berikut:
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nama Siswa</th>
+                                    <th>Matematika</th>
+                                    <th>Bahasa Indonesia</th>
+                                    <th>IPA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Andi</td>
+                                    <td>85</td>
+                                    <td>90</td>
+                                    <td>78</td>
+                                </tr>
+                                <tr>
+                                    <td>Budi</td>
+                                    <td>70</td>
+                                    <td>85</td>
+                                    <td>92</td>
+                                </tr>
+                                <tr>
+                                    <td>Citra</td>
+                                    <td>92</td>
+                                    <td>75</td>
+                                    <td>80</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        Siapakah siswa dengan nilai rata-rata tertinggi?`,
+                    options: ['A. Andi', 'B. Budi', 'C. Citra', 'D. Andi dan Budi', 'E. Semua sama'],
+                    correctAnswer: 'A',
+                    explanation: `Untuk mencari nilai rata-rata tertinggi, hitung rata-rata setiap siswa:
+                        Andi: (85 + 90 + 78) / 3 = 253 / 3 = 84.33
+                        Budi: (70 + 85 + 92) / 3 = 247 / 3 = 82.33
+                        Citra: (92 + 75 + 80) / 3 = 247 / 3 = 82.33
+                        Jadi, Andi memiliki nilai rata-rata tertinggi.`
+                },
+                 {
+        id: 34,
+        type: 'TIU',
+        question: `Perhatikan tabel daftar harga barang berikut:
+            <table style="width:100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Nama Barang</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Harga Satuan (Rp)</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Stok</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Pensil</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">2.500</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">100</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Buku Tulis</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">5.000</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">80</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Penghapus</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">1.000</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">150</td>
+                    </tr>
+                </tbody>
+            </table>
+            Jika seseorang membeli 2 Pensil dan 3 Buku Tulis, berapa total uang yang harus dibayar?`,
+        options: ['A. Rp 20.000', 'B. Rp 25.000', 'C. Rp 27.500', 'D. Rp 30.000', 'E. Rp 32.500'],
+        correctAnswer: 'A', // (2 * 2500) + (3 * 5000) = 5000 + 15000 = 20000
+        explanation: `Perhitungan:
+            2 Pensil x Rp 2.500 = Rp 5.000
+            3 Buku Tulis x Rp 5.000 = Rp 15.000
+            Total = Rp 5.000 + Rp 15.000 = Rp 20.000`
+    },
+    {
+        id: 35,
+        type: 'TIU',
+        question: `Perhatikan tabel jadwal keberangkatan bus berikut:
+            <table style="width:100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Tujuan</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Jam Keberangkatan</th>
+                        <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">Perkiraan Waktu Tempuh</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Jakarta</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">07.00</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">3 jam</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Bandung</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">08.30</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">2 jam 30 menit</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Surabaya</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">09.00</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">10 jam</td>
+                    </tr>
+                </tbody>
+            </table>
+            Jika Anda berangkat ke Bandung, pukul berapa Anda diperkirakan tiba di tujuan?`,
+        options: ['A. 10.00', 'B. 10.30', 'C. 11.00', 'D. 11.30', 'E. 12.00'],
+        correctAnswer: 'C', // 08.30 + 2 jam 30 menit = 11.00
+        explanation: `Waktu keberangkatan ke Bandung adalah 08.30.
+            Perkiraan waktu tempuh adalah 2 jam 30 menit.
+            Jadi, waktu tiba = 08.30 + 02.30 = 11.00.`
+    },
+    {
+        id: 36,
+        type: 'TIU',
+        question: `Jika $X = 5^2 \\times 2$ dan $Y = 4^3 - 10$, maka hubungan antara X dan Y adalah...`,
+        options: [
+            'A. $X > Y$',
+            'B. $X < Y$',
+            'C. $X = Y$',
+            'D. $X = 2Y$',
+            'E. Hubungan X dan Y tidak dapat ditentukan'
+        ],
+        correctAnswer: 'B',
+        explanation: `
+            Hitung nilai X:
+            $X = 5^2 \\times 2 = 25 \\times 2 = 50$
             
-            // Acak urutan pilihan jawaban
-            shuffleArray(currentQuestion.options);
+            Hitung nilai Y:
+            $Y = 4^3 - 10 = 64 - 10 = 54$
             
-            let optionsContainer = document.getElementById('options');
-            currentQuestion.options.forEach((option, index) => {
-                let button = document.createElement('button');
-                button.innerText = option;
-                button.classList.add('option-btn');
+            Membandingkan X dan Y:
+            $50 < 54$
+            
+            Jadi, $X < Y$.
+        `
+    },
+  {
+    id: 37,
+    type: 'TIU',
+    question: 'Tentukan hasil dari integral berikut: $\\int (2x+5)^9 \\, dx$',
+    options: [
+        'A. $\\frac{1}{20}(2x+5)^{10} + c$',
+        'B. $\\frac{1}{15}(2x+5)^{10} + c$',
+        'C. $\\frac{1}{20}(2x+5)^8 + c$',
+        'D. $\\frac{1}{4}(2x+5)^9 + c$'
+    ],
+    correctAnswer: 'A',
+    explanation: 'Gunakan substitusi: $u = 2x+5$, $du = 2\\,dx$. Hasil integral: $\\frac{1}{20}(2x+5)^{10} + c$.'
+},
+
+    
+
                 
-                if (currentQuestion.options.length % 2 !== 0 && index === currentQuestion.options.length - 1) {
-                    button.classList.add('full-width');
+                // TIU (31-65) - Soal Figural (Gambar) - NEW AT 33
+               
+                // TKP (66-110) - Sample 1: TKP now has score for each option
+                {
+                    id: 66,
+                    type: 'TKP',
+                    question: 'Anda melihat rekan kerja Anda melakukan kesalahan fatal dalam pekerjaan. Apa yang akan Anda lakukan?',
+                    options: [
+                        { text: 'A. Melaporkan langsung kepada atasan.', score: 1 },
+                        { text: 'B. Membiarkannya karena bukan urusan Anda.', score: 2 },
+                        { text: 'C. Menegurnya secara pribadi dan menawarkan bantuan.', score: 5 }, // Best answer
+                        { text: 'D. Menunggu rekan lain yang melaporkan.', score: 3 },
+                        { text: 'E. Membicarakan dengan rekan kerja lain.', score: 4 }
+                    ],
+                    explanation: 'Tindakan yang paling profesional dan konstruktif adalah menegur secara pribadi dan menawarkan bantuan untuk memperbaiki kesalahan, menunjukkan integritas dan kolaborasi. Melaporkan langsung (A) bisa jadi diperlukan jika masalah berlanjut, tetapi C lebih mencerminkan inisiatif personal dan kolaborasi. Membicarakan (E) bisa menimbulkan gosip. Menunggu (D) atau membiarkan (B) menunjukkan kurangnya tanggung jawab.'
+                },
+                 // TKP (66-110) - Sample 2: TKP with scores
+                {
+                    id: 67,
+                    type: 'TKP',
+                    question: 'Sebagai seorang PNS, Anda ditugaskan untuk melayani masyarakat yang berasal dari berbagai latar belakang. Bagaimana Anda akan bersikap?',
+                    options: [
+                        { text: 'A. Melayani hanya yang memiliki kartu identitas lengkap.', score: 2 },
+                        { text: 'B. Memprioritaskan kerabat atau kenalan pribadi.', score: 1 },
+                        { text: 'C. Melayani semua masyarakat dengan adil dan tanpa diskriminasi.', score: 5 }, // Best answer
+                        { text: 'D. Memberikan pelayanan cepat kepada yang kaya atau berkuasa.', score: 3 },
+                        { text: 'E. Menolak melayani jika merasa tidak nyaman.', score: 1 }
+                    ],
+                    explanation: 'Prinsip utama pelayanan publik adalah melayani semua masyarakat dengan adil dan tanpa diskriminasi, sesuai dengan prinsip good governance dan etika PNS. Opsi lain menunjukkan diskriminasi atau ketidakprofesionalan.'
                 }
+                // Add more questions if needed, up to 110.
+                // For this demo, I will use these few samples.
+            ];
+
+            // Fill up remaining questions up to 110 if not already present
+            for (let i = 1; i <= 110; i++) {
+                if (!questions.some(q => q.id === i)) {
+                    let type, defaultCorrectAnswerOrOptions, explanation;
+                    if (i >= 1 && i <= 30) {
+                        type = 'TWK';
+                        defaultCorrectAnswerOrOptions = ['A. Pilihan A', 'B. Pilihan B', 'C. Pilihan C', 'D. Pilihan D', 'E. Pilihan E'];
+                        explanation = `Pembahasan untuk soal TWK nomor ${i}. Ini adalah contoh soal.`;
+                    } else if (i >= 31 && i <= 65) {
+                        type = 'TIU';
+                        defaultCorrectAnswerOrOptions = ['A. Pilihan A', 'B. Pilihan B', 'C. Pilihan C', 'D. Pilihan D', 'E. Pilihan E'];
+                        explanation = `Pembahasan untuk soal TIU nomor ${i}. Ini adalah contoh soal.`;
+                    } else { // i >= 66 && i <= 110
+                        type = 'TKP';
+                        // For TKP, generate dummy scores (5,4,3,2,1 for options A-E)
+                        defaultCorrectAnswerOrOptions = [
+                            { text: 'A. Pilihan A', score: 5 },
+                            { text: 'B. Pilihan B', score: 4 },
+                            { text: 'C. Pilihan C', score: 3 },
+                            { text: 'D. Pilihan D', score: 2 },
+                            { text: 'E. Pilihan E', score: 1 }
+                        ];
+                        explanation = `Pembahasan untuk soal TKP nomor ${i}. Ini adalah contoh pembahasan untuk TKP dengan sistem penilaian poin.\nSetiap opsi memiliki bobot poin yang berbeda.`
+                    }
+
+                    questions.push({
+                        id: i,
+                        type: type,
+                        question: `Ini adalah contoh soal ${type} nomor ${i}.`,
+                        options: defaultCorrectAnswerOrOptions,
+                        correctAnswer: type !== 'TKP' ? 'A' : undefined, // Assign 'A' as dummy correct answer for TWK/TIU
+                        explanation: explanation
+                    });
+                }
+            }
+
+            // Sort questions by ID to ensure correct numbering
+            questions.sort((a, b) => a.id - b.id);
+
+            let currentQuestionIndex = 0; // 0-indexed for array
+            let userAnswers = Array(questions.length).fill(null); // Stores 'A', 'B', 'C', 'D', 'E' or {optionValue: 'A', score: 5} or null
+            let markedForReview = Array(questions.length).fill(false); // Stores true/false if marked
+            let hasBeenViewed = Array(questions.length).fill(false); // New: to track if question has been viewed
+            let timerInterval; // Variable to hold the timer interval
+            const totalExamTimeSeconds = 100 * 60; // 120 minutes * 60 seconds
+            let remainingTime = totalExamTimeSeconds; // Initial remaining time
+
+            let username = ''; // Initialize empty, will be set from form
+            let school = ''; // Initialize empty, will be set from form
+
+            // --- Local Storage for History ---
+            function getExamHistory() {
+                const history = localStorage.getItem('examHistory');
+                return history ? JSON.parse(history) : [];
+            }
+
+            function saveExamHistory(record) {
+                const history = getExamHistory();
+                history.push(record);
+                localStorage.setItem('examHistory', JSON.stringify(history));
+            }
+
+            function displayExamHistory() {
+                const history = getExamHistory();
+                examHistoryList.innerHTML = '';
+                if (history.length === 0) {
+                    examHistoryList.innerHTML = '<p style="text-align: center; color: #888;">Belum ada riwayat ujian.</p>';
+                    return;
+                }
+                // Sort history by date, newest first
+                history.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                history.forEach((record, index) => {
+                    const item = document.createElement('div');
+                    item.classList.add('history-item');
+                    item.innerHTML = `
+                        <strong>${index + 1}. Ujian ${record.school}</strong><br>
+                        <span>Nama: ${record.username}</span><br>
+                        <span>Tanggal: ${record.date}</span><br>
+                        <span>Skor: ${record.score}/${record.maxScore}</span>
+                    `;
+                    examHistoryList.appendChild(item);
+                });
+            }
+
+            // --- Core Functions ---
+
+            function updateHeaderDisplay() {
+                if (username) {
+                    userAvatar.textContent = username.substring(0, 2).toUpperCase();
+                    displayUsername.textContent = username;
+                } else {
+                    userAvatar.textContent = '?';
+                    displayUsername.textContent = 'Nama Anda';
+                }
+                if (school) {
+                    displaySchool.textContent = school;
+                } else {
+                    displaySchool.textContent = 'Sekdin Impian';
+                }
+            }
+
+
+            function showSection(sectionToShow) {
+                biodataSection.classList.remove('active');
+                questionSection.classList.remove('active');
+                resultSection.classList.remove('active');
+                discussionSection.classList.remove('active');
+                sectionToShow.classList.add('active');
+
+                // Update header display regardless of section, as it's global
+                updateHeaderDisplay();
+
                 
-                button.onclick = () => {
-                    // Simpan jawaban pengguna
-                    userAnswers.push({
-                        question: currentQuestion.question,
-                        userAnswer: option,
-                        correctAnswer: currentQuestion.answer,
-                        isCorrect: option === currentQuestion.answer
+
+                // Manage timer display visibility
+                if (sectionToShow === questionSection) {
+                    timerDisplay.style.display = 'block';
+                } else {
+                    timerDisplay.style.display = 'none';
+                }
+
+                // Update result section display names
+                resultUsername.textContent = username;
+                resultSchoolName.textContent = school;
+            }
+
+            function getQuestionType(questionId) {
+                if (questionId >= 1 && questionId <= 30) return 'TWK 🦅';
+                if (questionId >= 31 && questionId <= 65) return 'TIU  🔢';
+                if (questionId >= 66 && questionId <= 110) return 'TKP 👤';
+                return '';
+            }
+
+            function updateQuestionDisplay() {
+                const q = questions[currentQuestionIndex];
+                const questionNumber = currentQuestionIndex + 1; // 1-indexed for display
+
+                questionTitle.textContent = `${questionNumber}. ${getQuestionType(q.id)}`;
+                // Use innerHTML for questionText to render HTML tags like <table> or <img>
+                questionText.innerHTML = q.question;
+                optionsContainer.innerHTML = '';
+                answerStatusDisplay.style.display = 'none'; // Hide status by default
+
+                // Mark current question as viewed
+                hasBeenViewed[currentQuestionIndex] = true;
+
+                // Render options based on question type
+                const currentAnswer = userAnswers[currentQuestionIndex];
+                let selectedOptionValue = null;
+                if (currentAnswer !== null) {
+                    selectedOptionValue = q.type === 'TKP' ? currentAnswer.optionValue : currentAnswer;
+                }
+
+                const renderOption = (optionData, index) => { // Removed isTKP param, will determine content type dynamically
+                    const optionValue = String.fromCharCode(65 + index); // A, B, C, D, E
+
+                    const label = document.createElement('label');
+                    label.classList.add('option');
+
+                    const input = document.createElement('input');
+                    input.type = 'radio';
+                    input.name = 'answer';
+                    input.value = optionValue;
+                    input.id = `q${q.id}-opt-${optionValue}`; // Add unique ID for radio input
+                    input.setAttribute('tabindex', '-1'); // Make it not directly focusable by tab
+
+                    if (selectedOptionValue === optionValue) {
+                        input.checked = true;
+                        label.classList.add('selected-answer');
+                    }
+
+                    label.appendChild(input);
+
+                    // Determine the actual text/HTML content for the option
+                    // If optionData is an object (like for TKP or Figural TIU), use its 'text' property.
+                    // Otherwise (for plain text TWK/TIU), use optionData directly.
+                    const optionContent = (typeof optionData === 'object' && optionData !== null && 'text' in optionData) ? optionData.text : optionData;
+
+                    // Create a span or div for the text/image content
+                    const contentSpan = document.createElement('span');
+                    contentSpan.innerHTML = optionContent; // Use innerHTML to render HTML (like <img>)
+                    label.appendChild(contentSpan);
+
+
+                    label.addEventListener('click', (event) => {
+                        // Mencegah perilaku default label jika ada, agar kontrol penuh pada JS
+                        event.preventDefault();
+
+                        const currentRadio = label.querySelector('input[type="radio"]');
+                        const currentlySelected = userAnswers[currentQuestionIndex];
+                        const clickedOptionValue = currentRadio.value;
+
+                        // Periksa apakah opsi yang diklik saat ini adalah yang sudah terpilih
+                        let isCurrentlySelected = false;
+                        if (q.type === 'TKP' && currentlySelected) {
+                            isCurrentlySelected = (currentlySelected.optionValue === clickedOptionValue);
+                        } else if (currentlySelected) {
+                            isCurrentlySelected = (currentlySelected === clickedOptionValue);
+                        }
+
+                        if (isCurrentlySelected) {
+                            // Jika opsi ini sudah terpilih, batalkan pilihan (toggle off)
+                            currentRadio.checked = false;
+                            label.classList.remove('selected-answer');
+                            userAnswers[currentQuestionIndex] = null; // Clear the answer
+                        } else {
+                            // Jika belum terpilih, pilih opsi ini
+                            // Pertama, hapus 'selected-answer' dari semua opsi lain
+                            optionsContainer.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected-answer'));
+
+                            // Lalu, set opsi yang baru dipilih
+                            currentRadio.checked = true;
+                            label.classList.add('selected-answer');
+
+                            if (q.type === 'TKP') {
+                                userAnswers[currentQuestionIndex] = {
+                                    optionValue: clickedOptionValue,
+                                    score: optionData.score // For TKP, optionData is always an object with score
+                                };
+                            } else {
+                                userAnswers[currentQuestionIndex] = clickedOptionValue; // For TWK/TIU, just store the letter
+                            }
+                        }
+                        updateProgressCounts();
+                        updateQuestionNumbersDisplay();
                     });
 
-                    if (option === currentQuestion.answer) {
-                        document.getElementById('feedback').innerText = "✔️ Jawaban Benar!";
-                        document.getElementById('feedback').style.color = "green";
-                        correctAnswers++;
-                    } else {
-                        document.getElementById('feedback').innerText = "❌ Jawaban Salah, coba lagi!";
-                        document.getElementById('feedback').style.color = "red";
-                        wrongAnswers++; // Tambah jumlah jawaban salah
-                    }
-                    totalAnswered++;
-                    questionIndex++;
-                    setTimeout(loadQuestion, 1000);
+                    optionsContainer.appendChild(label);
                 };
-                optionsContainer.appendChild(button);
-            });
-        }
 
-        function showResult() {
-            clearInterval(timerInterval); // Hentikan timer
-            document.getElementById('quiz').style.display = 'none';
-            document.getElementById('result').style.display = 'flex';
-            document.getElementById('total-correct').innerText = `Total Benar: ${correctAnswers}`;
-            document.getElementById('total-wrong').innerText = `Total Salah: ${wrongAnswers}`;
-            document.getElementById('total-answered').innerText = `Total Soal yang Dijawab: ${totalAnswered}`;
+                // Now all options are rendered using the same renderOption function,
+                // which intelligently handles strings or objects for optionData.
+                q.options.forEach((optionData, index) => renderOption(optionData, index));
 
-            // Tampilkan jawaban pengguna
-            let userAnswersContainer = document.getElementById('user-answers');
-            userAnswersContainer.innerHTML = '<h4>Jawaban Anda:</h4>';
-            userAnswers.forEach((answer, index) => {
-                userAnswersContainer.innerHTML += `
-                    <p><strong>Soal ${index + 1}:</strong> ${answer.question}</p>
-                    <p><strong>Jawaban Anda:</strong> ${answer.userAnswer} (${answer.isCorrect ? 'Benar' : 'Salah'})</p>
-                    <p><strong>Jawaban Benar:</strong> ${answer.correctAnswer}</p>
-                    <hr>
+                updateQuestionNumbersDisplay(); // Highlight current question
+                updateProgressCounts(); // Update answered/not answered counts
+            }
+
+            function updateProgressCounts() {
+                let answered = 0;
+                let notAnswered = 0;
+                for (let i = 0; i < questions.length; i++) {
+                    if (userAnswers[i] !== null) {
+                        answered++;
+                    } else {
+                        notAnswered++;
+                    }
+                }
+                answeredCountSpan.textContent = answered;
+                notAnsweredCountSpan.textContent = notAnswered;
+            }
+
+            function updateQuestionNumbersDisplay() {
+                questionNumbersContainer.innerHTML = '';
+                questions.forEach((q, index) => {
+                    const button = document.createElement('button');
+                    button.classList.add('q-num');
+                    button.textContent = q.id; // Use q.id for 1-indexed number
+
+                    // PENTING: Ubah urutan prioritas class di sini sesuai permintaan
+                    if (index === currentQuestionIndex) {
+                        button.classList.add('current');
+                    }
+                    // Prioritaskan 'marked-q' HANYA JIKA soal sudah dijawab DAN ditandai
+                    else if (userAnswers[index] !== null && markedForReview[index]) {
+                        button.classList.add('marked-q');
+                    }
+                    // Kemudian cek apakah sudah dijawab (tanpa ditandai)
+                    else if (userAnswers[index] !== null) {
+                        button.classList.add('answered-q');
+                    }
+                    // Lalu cek apakah sudah dilihat tapi belum dijawab
+                    else if (hasBeenViewed[index]) {
+                        button.classList.add('seen-unanswered-q');
+                    }
+                    // Default: Belum dilihat dan belum dijawab (akan menggunakan styling dasar .q-num)
+                    // Tidak perlu else { ... } jika tidak ada class khusus untuk ini.
+
+
+                    button.addEventListener('click', () => {
+                        currentQuestionIndex = index;
+                        updateQuestionDisplay();
+                    });
+                    questionNumbersContainer.appendChild(button);
+                });
+            }
+
+            function startTimer() {
+                if (timerInterval) clearInterval(timerInterval); // Clear any existing timer
+
+                timerInterval = setInterval(() => {
+                    remainingTime--;
+                    if (remainingTime < 0) {
+                        clearInterval(timerInterval);
+                        remainingTime = 0;
+                        // Use modal for time's up
+                        modalMessage.textContent = 'Waktu ujian telah habis! Ujian akan diselesaikan secara otomatis.';
+                        modalCancelBtn.style.display = 'none'; // No cancel option for time's up
+                        modalConfirmBtn.textContent = 'OK';
+                        modalConfirmBtn.onclick = () => {
+                            confirmModal.style.display = 'none';
+                            finishExam();
+                        };
+                        confirmModal.style.display = 'flex';
+                        return;
+                    }
+
+                    const hours = Math.floor(remainingTime / 3600);
+                    const minutes = Math.floor((remainingTime % 3600) / 60);
+                    const seconds = remainingTime % 60;
+
+                    const formattedTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                    timerDisplay.textContent = `Sisa Waktu: ${formattedTime}`;
+                    remainingTimeProgressSpan.textContent = formattedTime; // Update in progress bar
+                }, 1000);
+            }
+
+            function finishExam() {
+                clearInterval(timerInterval); // Stop the timer
+                calculateResults();
+                saveCurrentExamResult(); // Save to history
+                showSection(resultSection);
+            }
+
+            function calculateResults() {
+                let twkCorrectCount = 0;
+                let tiuCorrectCount = 0;
+                let tkpBestScoreCount = 0; // For TKP, this will count highest score (5 points)
+
+                let twkScore = 0;
+                let tiuScore = 0;
+                let tkpScore = 0;
+
+                let twkTotalQuestions = 0;
+                let tiuTotalQuestions = 0;
+                let tkpTotalQuestions = 0;
+
+                questions.forEach((q, index) => {
+                    const userAnswer = userAnswers[index];
+                    const questionType = q.type;
+
+                    if (questionType === 'TWK') {
+                        twkTotalQuestions++;
+                        if (userAnswer !== null) {
+                            if (userAnswer === q.correctAnswer) {
+                                twkCorrectCount++;
+                                twkScore += 5; // 5 points for correct TWK
+                            }
+                        }
+                    } else if (questionType === 'TIU') {
+                        tiuTotalQuestions++;
+                        if (userAnswer !== null) {
+                            if (userAnswer === q.correctAnswer) {
+                                tiuCorrectCount++;
+                                tiuScore += 5; // 5 points for correct TIU
+                            }
+                        }
+                    } else if (questionType === 'TKP') {
+                        tkpTotalQuestions++;
+                        if (userAnswer !== null && userAnswer.score !== undefined) {
+                            tkpScore += userAnswer.score;
+                            // For TKP, count as 'correct' if it got the highest score (5 points)
+                            if (userAnswer.score === 5) {
+                                tkpBestScoreCount++;
+                            }
+                        }
+                    }
+                });
+
+                const totalScoreAchieved = twkScore + tiuScore + tkpScore;
+                // Max possible score: TWK (30*5=150), TIU (35*5=175), TKP (45*5=225)
+                const maxTwkScore = twkTotalQuestions * 5;
+                const maxTiuScore = tiuTotalQuestions * 5;
+                const maxTkpScore = tkpTotalQuestions * 5; // Max TKP score if all chose 5 points
+                const maxTotalScore = maxTwkScore + maxTiuScore + maxTkpScore;
+
+                finalTotalScoreSpan.textContent = `${totalScoreAchieved}/${maxTotalScore}`;
+                twkScoreSpan.textContent = `${twkScore}/${maxTwkScore}`;
+                tiuScoreSpan.textContent = `${tiuScore}/${maxTiuScore}`;
+                tkpScoreSpan.textContent = `${tkpScore}/${maxTkpScore}`;
+
+                twkInfoSpan.textContent = `(${twkCorrectCount}/${twkTotalQuestions} Soal Benar)`;
+                tiuInfoSpan.textContent = `(${tiuCorrectCount}/${tiuTotalQuestions} Soal Benar)`;
+                tkpInfoSpan.textContent = `(${tkpBestScoreCount}/${tkpTotalQuestions} Soal Benar)`; // More detailed TKP info for best score count
+
+                summaryTotalScoreSpan.textContent = `${totalScoreAchieved}/${maxTotalScore}`;
+                summaryTotalInfoSpan.textContent = `(${questions.length} soal)`;
+
+                // For overall correct/wrong/skipped counts:
+                let overallCorrect = 0; // TWK/TIU correct OR TKP score 5
+                let overallWrong = 0;   // TWK/TIU wrong OR TKP score < 5 (but answered)
+                let overallSkipped = 0; // Not answered
+
+                questions.forEach((q, index) => {
+                    const userAnswer = userAnswers[index];
+                    if (userAnswer === null) {
+                        overallSkipped++;
+                    } else if (q.type === 'TWK' || q.type === 'TIU') {
+                        if (userAnswer === q.correctAnswer) {
+                            overallCorrect++;
+                        } else {
+                            overallWrong++;
+                        }
+                    } else if (q.type === 'TKP') {
+                        if (userAnswer.score === 5) {
+                            overallCorrect++;
+                        } else {
+                            overallWrong++;
+                        }
+                    }
+                });
+
+                correctCountSpan.textContent = overallCorrect;
+                wrongCountSpan.textContent = overallWrong;
+                skippedCountSpan.textContent = overallSkipped;
+            }
+
+            function saveCurrentExamResult() {
+                const now = new Date();
+                const dateString = now.toLocaleDateString('id-ID', {
+                    day: '2-digit', month: 'long', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+
+                const totalScoreAchieved = parseInt(finalTotalScoreSpan.textContent.split('/')[0]);
+                const maxTotalScore = parseInt(finalTotalScoreSpan.textContent.split('/')[1]);
+
+                const resultRecord = {
+                    date: dateString,
+                    username: username,
+                    school: school,
+                    score: totalScoreAchieved,
+                    maxScore: maxTotalScore,
+                    twk: { score: parseInt(twkScoreSpan.textContent.split('/')[0]), maxScore: parseInt(twkScoreSpan.textContent.split('/')[1]) },
+                    tiu: { score: parseInt(tiuScoreSpan.textContent.split('/')[0]), maxScore: parseInt(tiuScoreSpan.textContent.split('/')[1]) },
+                    tkp: { score: parseInt(tkpScoreSpan.textContent.split('/')[0]), maxScore: parseInt(tkpScoreSpan.textContent.split('/')[1]) },
+                    correct: parseInt(correctCountSpan.textContent),
+                    wrong: parseInt(wrongCountSpan.textContent),
+                    skipped: parseInt(skippedCountSpan.textContent)
+                };
+                saveExamHistory(resultRecord);
+            }
+
+
+            // --- Pembahasan Functions ---
+            let currentDiscussionIndex = 0; // Keep track of which discussion question is shown
+
+            function loadDiscussionNumbers() {
+                discussionQuestionNumbersContainer.innerHTML = '';
+                questions.forEach((q, index) => {
+                    const button = document.createElement('button');
+                    button.classList.add('q-num'); // Re-use q-num styling
+                    button.textContent = q.id;
+
+                    // Apply status styling (answered correctly, incorrectly, or skipped)
+                    const userAnswer = userAnswers[index];
+                    if (q.type === 'TWK' || q.type === 'TIU') {
+                        if (userAnswer !== null && userAnswer === q.correctAnswer) {
+                            button.classList.add('answered-q'); // Correct
+                        } else if (userAnswer !== null && userAnswer !== q.correctAnswer) {
+                            button.classList.add('not-answered-q'); // Incorrect
+                        } else {
+                            button.style.backgroundColor = 'lightgray'; // Skipped
+                        }
+                    } else if (q.type === 'TKP') { // TKP
+                        if (userAnswer !== null && userAnswer.score === 5) {
+                            button.classList.add('answered-q'); // Correct (best score)
+                        } else if (userAnswer !== null && userAnswer.score < 5) {
+                            button.classList.add('not-answered-q'); // Incorrect (not best score)
+                        } else {
+                            button.style.backgroundColor = 'lightgray'; // Skipped
+                        }
+                    }
+
+
+                    button.addEventListener('click', () => {
+                        currentDiscussionIndex = index;
+                        displaySingleDiscussion(currentDiscussionIndex);
+                    });
+                    discussionQuestionNumbersContainer.appendChild(button);
+                });
+                // After loading numbers, display the first discussion by default
+                // Only display if there are questions
+                if (questions.length > 0) {
+                    displaySingleDiscussion(currentDiscussionIndex);
+                } else {
+                    discussionContentArea.innerHTML = '<p style="text-align: center; color: #666;">Tidak ada soal untuk pembahasan.</p>';
+                }
+            }
+
+            function displaySingleDiscussion(index) {
+                const q = questions[index];
+                const userAnswer = userAnswers[index]; // 'A', 'B', etc. or {optionValue: 'A', score: 5}
+                let correctAnswerValue = q.type !== 'TKP' ? q.correctAnswer : null;
+                let tkpBestOptionValue = null;
+
+                // Update discussion header title with current question info
+                discussionHeaderTitle.textContent = `${q.id}. ${getQuestionType(q.id)} - PEMBAHASAN`;
+
+
+                // For TKP, find the option with score 5
+                if (q.type === 'TKP') {
+                    const bestOption = q.options.find(opt => opt.score === 5);
+                    if (bestOption) {
+                        tkpBestOptionValue = String.fromCharCode(65 + q.options.indexOf(bestOption));
+                    }
+                }
+
+                // Header for the discussion content area
+                let htmlContent = `
+                    <p class="discussion-question" style="margin-bottom: 20px;">
+                        ${q.question}
+                    </p>
+                    <div style="margin-bottom: 20px;">
+                        <span style="font-weight: 600;">Jawaban Kamu: </span>
                 `;
+
+                // Determine user's answer status text for the header
+                let userHeaderStatusText = '';
+                let userHeaderStatusColor = '#666'; // Default for skipped
+                let isUserAnswerCorrectInHeader = false;
+
+                if (userAnswer === null) {
+                    userHeaderStatusText = 'Tidak Dijawab';
+                } else if (q.type === 'TKP') {
+                    const userSelectedTKPOption = q.options.find((opt, idx) => String.fromCharCode(65 + idx) === userAnswer.optionValue);
+                    if (userSelectedTKPOption) {
+                        if (userAnswer.score === 5) {
+                            userHeaderStatusText = `Benar`;
+                            userHeaderStatusColor = 'var(--success-color)';
+                            isUserAnswerCorrectInHeader = true;
+                        } else {
+                            userHeaderStatusText = `Salah`;
+                            userHeaderStatusColor = 'var(--danger-color)';
+                        }
+                    }
+                } else { // TWK & TIU
+                    if (userAnswer === q.correctAnswer) {
+                        userHeaderStatusText = 'Benar';
+                        userHeaderStatusColor = 'var(--success-color)';
+                        isUserAnswerCorrectInHeader = true;
+                    } else {
+                        userHeaderStatusText = 'Salah';
+                        userHeaderStatusColor = 'var(--danger-color)';
+                    }
+                }
+
+                htmlContent += `<span style="color: ${userHeaderStatusColor}; font-weight: 600;">${userHeaderStatusText}</span></div>`;
+
+                // Render options
+                q.options.forEach((optionData, idx) => {
+                    const optionValue = String.fromCharCode(65 + idx);
+                    // Get the content for the option (text string or HTML string from object.text)
+                    const optionContent = (typeof optionData === 'object' && optionData !== null && 'text' in optionData) ? optionData.text : optionData;
+
+                    let optionClasses = 'discussion-option';
+                    let statusIcon = '';
+                    let isThisOptionCorrect = false;
+                    let isThisOptionUserAnswer = false;
+
+                    if (q.type === 'TKP') {
+                        // Check if this is the best (correct) TKP option
+                        if (optionValue === tkpBestOptionValue) {
+                            isThisOptionCorrect = true;
+                        }
+                        // Check if this is the user's selected option
+                        if (userAnswer !== null && userAnswer.optionValue === optionValue) {
+                            isThisOptionUserAnswer = true;
+                        }
+
+                        if (isThisOptionUserAnswer && isThisOptionCorrect) {
+                            optionClasses += ' correct-option';
+                            statusIcon = '<span class="icon-status correct">&#10003;</span>'; // Checkmark
+                        } else if (isThisOptionUserAnswer && !isThisOptionCorrect) {
+                            optionClasses += ' wrong-user-answer';
+                            statusIcon = '<span class="icon-status wrong">&#10007;</span>'; // Cross
+                        } else if (isThisOptionCorrect) {
+                            optionClasses += ' correct-option';
+                            statusIcon = '<span class="icon-status correct">&#10003;</span>'; // Checkmark
+                        }
+
+                        htmlContent += `
+                            <div class="${optionClasses}">
+                                ${optionValue}. ${optionContent} <span class="discussion-option-score">(${optionData.score} Poin)</span>
+                                ${statusIcon}
+                            </div>
+                        `;
+                    } else { // TWK & TIU (including the new figural TIU)
+                        isThisOptionCorrect = (optionValue === correctAnswerValue);
+                        isThisOptionUserAnswer = (userAnswer !== null && userAnswer === optionValue);
+
+                        if (isThisOptionUserAnswer && isThisOptionCorrect) {
+                            optionClasses += ' correct-option';
+                            statusIcon = '<span class="icon-status correct">&#10003;</span>';
+                        } else if (isThisOptionUserAnswer && !isThisOptionCorrect) {
+                            optionClasses += ' wrong-user-answer';
+                            statusIcon = '<span class="icon-status wrong">&#10007;</span>';
+                        } else if (isThisOptionCorrect) {
+                            optionClasses += ' correct-option';
+                            statusIcon = '<span class="icon-status correct">&#10003;</span>';
+                        }
+
+                        htmlContent += `
+                            <div class="${optionClasses}">
+                                ${optionValue}. ${optionContent}
+                                ${statusIcon}
+                            </div>
+                        `;
+                    }
+                });
+
+                htmlContent += `
+                    <h3 style="margin-top: 30px; margin-bottom: 10px; color: var(--primary-color);">Pembahasan:</h3>
+                    <p class="discussion-explanation">${q.explanation.replace(/\n/g, '<br>')}</p>
+                `;
+
+                discussionContentArea.innerHTML = htmlContent;
+
+                // Highlight the current question number in the discussion navigation
+                discussionQuestionNumbersContainer.querySelectorAll('.q-num').forEach((btn, idx) => {
+                    btn.classList.remove('selected');
+                    if (idx === index) {
+                        btn.classList.add('selected');
+                    }
+                });
+
+                // Enable/disable navigation buttons for discussion
+                prevDiscussionBtn.disabled = index === 0;
+                nextDiscussionBtn.disabled = index === questions.length - 1;
+            }
+
+
+            function resetExam() {
+                currentQuestionIndex = 0;
+                userAnswers = Array(questions.length).fill(null);
+                markedForReview = Array(questions.length).fill(false);
+                hasBeenViewed = Array(questions.length).fill(false); // Reset viewed status
+                remainingTime = totalExamTimeSeconds; // Reset timer to full
+                startTimer(); // Restart the timer
+                updateQuestionDisplay();
+            }
+
+            // --- Event Listeners ---
+
+            // Biodata Section
+            startExamBtn.addEventListener('click', () => {
+                const name = inputUsername.value.trim();
+                if (name === '') {
+                    alert('Nama lengkap tidak boleh kosong!');
+                    return;
+                }
+                username = name;
+                school = inputSchool.value;
+
+                // Update header immediately
+                updateHeaderDisplay();
+
+                showSection(questionSection);
+                resetExam(); // Start the quiz
             });
-        }
 
-        function endQuiz() {
-            showResult(); // Tampilkan hasil langsung
-        }
+            // Quiz Section
+            nextQuestionBtn.addEventListener('click', () => {
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    updateQuestionDisplay();
+                } else {
+                    // Hanya berikan peringatan jika sudah di soal terakhir
+                    // Tidak perlu force finish jika belum dijawab semua, user bisa klik 'Selesai Ujian'
+                    alert('Anda telah mencapai soal terakhir.');
+                }
+            });
 
-        function restartGame() {
-            // Reset waktu ke nilai awal yang dipilih dan acak soal lagi
-            startGame(initialTime);
-        }
+            prevQuestionBtn.addEventListener('click', () => {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    updateQuestionDisplay();
+                }
+            });
 
-        function goToMainMenu() {
-            clearInterval(timerInterval); // Hentikan timer
-            document.getElementById('result').style.display = 'none';
-            document.getElementById('time-select').style.display = 'block';
-            document.getElementById('quiz').style.display = 'none';
-        }
+            saveMarkBtn.addEventListener('click', () => {
+                markedForReview[currentQuestionIndex] = !markedForReview[currentQuestionIndex]; // Toggle mark
+                updateQuestionNumbersDisplay(); // Update button appearance
+                // Optional: alert(`Soal ${currentQuestionIndex + 1} ${markedForReview[currentQuestionIndex] ? 'ditandai' : 'tanda dilepas'}.`);
+            });
+
+            nextUnansweredBtn.addEventListener('click', () => {
+                let nextIndex = -1;
+                // Search from current question + 1 to end
+                for (let i = currentQuestionIndex + 1; i < questions.length; i++) {
+                    if (userAnswers[i] === null && !markedForReview[i]) {
+                        nextIndex = i;
+                        break;
+                    }
+                }
+                // If not found, search from beginning to current question - 1
+                if (nextIndex === -1) {
+                    for (let i = 0; i < currentQuestionIndex; i++) {
+                        if (userAnswers[i] === null && !markedForReview[i]) {
+                            nextIndex = i;
+                            break;
+                        }
+                    }
+                }
+
+                if (nextIndex !== -1) {
+                    currentQuestionIndex = nextIndex;
+                    updateQuestionDisplay();
+                } else {
+                    alert('Semua soal sudah dijawab atau ditandai. Tidak ada soal kosong yang tersisa.');
+                }
+            });
+
+            finishExamBtn.addEventListener('click', () => {
+                // Show custom modal instead of alert
+                modalMessage.textContent = 'Anda yakin ingin menyelesaikan ujian? Waktu yang tersisa akan hangus dan hasil akan dihitung.';
+                modalCancelBtn.style.display = 'inline-block'; // Ensure cancel button is visible
+                modalConfirmBtn.textContent = 'Ya, Selesaikan';
+                modalConfirmBtn.onclick = () => { // Re-assign click handler for confirmation
+                    confirmModal.style.display = 'none';
+                    finishExam();
+                };
+                confirmModal.style.display = 'flex'; // Show the modal
+            });
+
+            // Modal Buttons Event Listeners
+            modalCancelBtn.addEventListener('click', () => {
+                confirmModal.style.display = 'none';
+            });
+            modalConfirmBtn.addEventListener('click', () => {
+                // This will be set dynamically based on context (finish exam or time's up)
+                // Default action is handled by the finishExamBtn click handler
+            });
+
+
+            // Result Section
+            viewDiscussionBtn.addEventListener('click', () => {
+                currentDiscussionIndex = 0; // Start discussion from the first question
+                loadDiscussionNumbers(); // Load all discussion numbers
+                showSection(discussionSection);
+            });
+
+            retakeExamBtn.addEventListener('click', () => {
+                // Show custom modal for retake confirmation
+                modalMessage.textContent = 'Anda yakin ingin mengulang ujian? Seluruh progres ujian ini akan direset.';
+                modalCancelBtn.style.display = 'inline-block';
+                modalConfirmBtn.textContent = 'Ya, Ulangi';
+                modalConfirmBtn.onclick = () => {
+                    confirmModal.style.display = 'none';
+                    resetExam(); // Reset quiz data and start timer
+                    showSection(questionSection); // Go back to quiz
+                };
+                confirmModal.style.display = 'flex';
+            });
+
+            backToBiodataBtn.addEventListener('click', () => {
+                showSection(biodataSection);
+                displayExamHistory(); // Refresh history display
+            });
+
+
+            // Discussion Section
+            backToScoreBtn.addEventListener('click', () => {
+                showSection(resultSection);
+            });
+
+            prevDiscussionBtn.addEventListener('click', () => {
+                if (currentDiscussionIndex > 0) {
+                    currentDiscussionIndex--;
+                    displaySingleDiscussion(currentDiscussionIndex);
+                }
+            });
+
+            nextDiscussionBtn.addEventListener('click', () => {
+                if (currentDiscussionIndex < questions.length - 1) {
+                    currentDiscussionIndex++;
+                    displaySingleDiscussion(currentDiscussionIndex);
+                }
+            });
+
+            // --- Initial Setup ---
+            displayExamHistory(); // Load history when page loads
+            showSection(biodataSection); // Start on biodata section
+            updateHeaderDisplay(); // Initial update for header with default values
+        });
     </script>
+    <footer style="text-align: center; padding: 20px; background-color: #5d0000; color: white; margin-top: auto;">
+    Copyright &copy; BrainUp
+</footer>
 </body>
 </html>
